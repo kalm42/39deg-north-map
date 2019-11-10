@@ -1,24 +1,35 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from "react";
+import Map from "./components/Map";
+import ControlPanel from "./components/ControlPanel";
 
 function App() {
+  const [coords, setCoords] = useState([39.7578253, -121.8761121]); // default to Chico, CA
+  const [showUS, setShowUS] = useState(false);
+  const [showStates, setShowStates] = useState(false);
+  const [showCounties, setShowCounties] = useState(false);
+  const [showCongress, setShowCongress] = useState(false);
+  useEffect(() => {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(position => {
+        setCoords([position.coords.latitude, position.coords.longitude]);
+      });
+    }
+  }, [setCoords]);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ControlPanel 
+        us={[showUS, setShowUS]} 
+        states={[showStates, setShowStates]} 
+        counties={[showCounties, setShowCounties]} 
+        congress={[showCongress, setShowCongress]} 
+        />
+      <Map
+        position={coords}
+        usOutline={showUS}
+        statesOutline={showStates}
+        countiesOutline={showCounties}
+        congressOutline={showCongress}
+      />
     </div>
   );
 }
